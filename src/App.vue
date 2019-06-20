@@ -3,21 +3,18 @@
     <h1>WeatherMap</h1>
     <CityForm/>
     <CityWeatherList/>
-    <!-- <Test/> -->
   </div>
 </template>
 
 <script>
 import CityForm from "./components/CityForm.vue";
 import CityWeatherList from "./components/CityWeatherList.vue";
-// import Test from "./components/Test.vue";
 
 export default {
   name: "app",
   components: {
     CityForm,
     CityWeatherList
-    // Test
   }
 };
 </script>

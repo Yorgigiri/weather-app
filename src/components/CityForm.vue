@@ -27,8 +27,14 @@ export default {
     };
   },
   methods: {
-    makeSomething: function() {
-        console.log('test');
+    addCity: function(cityName, storageData) {
+      const localValue = localStorage.getItem("city: " + cityName);
+
+      if (!localValue) {
+        localStorage.setItem("city: " + cityName, storageData);
+      } else {
+        alert("Такой город уже добавлен!");
+      }
     },
     getData: function(city) {
       let url =
@@ -38,19 +44,20 @@ export default {
       axios
         .get(url)
         .then(response => {
-          // this.city = response.data.name;
-          console.log(response.data);
-          console.log(`
-            Город: ${response.data.name} 
-            Страна: ${response.data.sys.country} 
-            Температура: ${response.data.main.temp}
-            Давление: ${response.data.main.pressure}
-          `);
-          this.makeSomething();
+          let storageData;
+
+          storageData = JSON.stringify({
+            cityName: response.data.name,
+            country: response.data.sys.country,
+            temperature: response.data.main.temp,
+            pressure: response.data.main.pressure
+          });
+
+          this.addCity(response.data.id, storageData);
         })
         .catch(() => {
           //   console.log(error);
-          alert("Такого города не существует");
+          alert("Такого города не существует!");
         });
     }
   }
