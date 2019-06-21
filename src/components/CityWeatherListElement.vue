@@ -4,7 +4,7 @@
     <div class="city-weather-list__column">{{city.temperature}} &deg;C</div>
     <div class="city-weather-list__column">{{city.pressure}} hPa</div>
     <div class="city-weather-list__column">
-      <button class="weather__btn weather__btn_inverted">Удалить</button>
+      <button class="weather__btn weather__btn_inverted" v-on:click="removeItem">Удалить</button>
     </div>
   </div>
 </template>
@@ -21,9 +21,9 @@ export default {
     }
   },
   methods: {
-    // removeItem: function() {
-    //   this.$emit('remove', this.city.id);
-    // },
+    removeItem: function() {
+      this.$emit('remove-element');
+    },
     // deleteEvent: function(event) {
     //   this.events.splice(this.events.indexOf(event), 1);
     // }

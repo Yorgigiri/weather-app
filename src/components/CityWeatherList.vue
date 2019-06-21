@@ -12,9 +12,14 @@
         <div class="city-weather-list__column">Атмосферное давление</div>
         <div class="city-weather-list__column"></div>
       </div>
-      <div v-for="city of citiesArray" :key="city.id">
-        <CityWeatherListElement :city="city"/>
-      </div>
+
+      <CityWeatherListElement
+        v-for="(city, index) of citiesArray"
+        :key="city.id"
+        :city="city"
+        @remove-element="removeElement(index)"
+      />
+
     </div>
   </div>
 </template>
@@ -26,7 +31,7 @@ export default {
   data() {
     return {
       city: null,
-      citiesArray: null
+      citiesArray: []
     };
   },
   components: {
@@ -36,9 +41,11 @@ export default {
     this.showList();
   },
   methods: {
-    // removeFromList(id) {
-    //   this.list = this.list.filter(item => item.id !== id);
-    // },
+    removeElement(element) {
+      // array.$remove(element);
+      console.log(element);
+      this.$delete(this.citiesArray, element);
+    },
     showList() {
       const PATTERN = /city:/;
       let array = []; // массив для всех ключей localStorage
