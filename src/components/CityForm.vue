@@ -1,23 +1,21 @@
 <template>
   <div class="city-form">
-    <div class="city-form__inner">
-      <input
-        v-model="cityName"
-        type="text"
-        class="weather__input"
-        placeholder="Введите название города"
-      >
-      <input
-        v-on:click.prevent="getData(cityName)"
-        type="submit"
-        value="Добавить"
-        class="weather__btn"
-      >
-    </div>
+    <form v-on:submit.prevent="getData(cityName)">
+      <div class="city-form__inner">
+        <input
+          v-model="cityName"
+          type="text"
+          class="weather__input"
+          placeholder="Введите название города"
+        >
+        <input type="submit" value="Добавить" class="weather__btn">
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
+import { eventEmitter } from "./../main";
 const axios = require("axios");
 
 export default {
@@ -27,11 +25,15 @@ export default {
     };
   },
   methods: {
+    updateList: function() {
+      eventEmitter.$emit('listUpdated');
+    },
     addCity: function(cityName, storageData) {
       const localValue = localStorage.getItem("city: " + cityName);
 
       if (!localValue) {
         localStorage.setItem("city: " + cityName, storageData);
+        this.updateList(); // Обновляем список
       } else {
         alert("Такой город уже добавлен!");
       }
@@ -53,10 +55,9 @@ export default {
             pressure: response.data.main.pressure
           });
 
-          this.addCity(response.data.id, storageData);
+          this.addCity(response.data.name, storageData);
         })
         .catch(() => {
-          //   console.log(error);
           alert("Такого города не существует!");
         });
     }

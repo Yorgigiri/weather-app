@@ -23,10 +23,7 @@ export default {
   methods: {
     removeItem: function() {
       this.$emit('remove-element');
-    },
-    // deleteEvent: function(event) {
-    //   this.events.splice(this.events.indexOf(event), 1);
-    // }
+    }
   }
 };
 </script>

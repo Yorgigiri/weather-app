@@ -3,7 +3,11 @@
     <div class="city-weather-list__inner">
       <div class="city-weather-list__row city-weather-list__row_with-sorting">
         <div class="city-weather-list__column">
-          <span class="city-weather-list__label_city">
+          <span
+            class="city-weather-list__label_city"
+            v-on:click="toggleSortClass"
+            v-bind:class="{ 'city-weather-list_is-descending': isDescending }"
+          >
             Город
             <span class="city-weather-list__sort"></span>
           </span>
@@ -19,18 +23,19 @@
         :city="city"
         @remove-element="removeElement(index)"
       />
-
     </div>
   </div>
 </template>
 
 <script>
 import CityWeatherListElement from "./CityWeatherListElement.vue";
+import { eventEmitter } from "../main";
 
 export default {
   data() {
     return {
       city: null,
+      isDescending: false,
       citiesArray: []
     };
   },
@@ -39,14 +44,27 @@ export default {
   },
   mounted() {
     this.showList();
+    eventEmitter.$on("listUpdated", () => {
+      this.showList();
+    });
   },
   methods: {
-    removeElement(element) {
-      // array.$remove(element);
-      console.log(element);
-      this.$delete(this.citiesArray, element);
+    toggleSortClass() {
+      this.isDescending = !this.isDescending;
+
+      if (this.isDescending) {
+        this.showList(true);
+      } else {
+        this.showList();
+      }
     },
-    showList() {
+    removeElement(elementIndex) {
+      localStorage.removeItem(
+        "city: " + this.citiesArray[elementIndex].cityName
+      );
+      this.$delete(this.citiesArray, elementIndex);
+    },
+    showList(isDescending) {
       const PATTERN = /city:/;
       let array = []; // массив для всех ключей localStorage
       let array2 = []; // массив только для ключей городов
@@ -62,6 +80,8 @@ export default {
         }
       });
 
+      array2.sort();
+
       for (let i = 0; i < localStorage.length; i++) {
         if (array2[i]) {
           let obj = JSON.parse(localStorage.getItem(array2[i]));
@@ -69,7 +89,11 @@ export default {
         }
       }
 
-      this.citiesArray = array3;
+      if (!isDescending) {
+        this.citiesArray = array3;
+      } else {
+        this.citiesArray = array3.slice().reverse();
+      }
     }
   }
 };
@@ -104,7 +128,7 @@ export default {
       height: 0;
       border-style: solid;
       border-width: 0 3.5px 4px 3.5px;
-      border-color: transparent transparent #bdbdbd transparent;
+      border-color: transparent transparent $color_gray5 transparent;
     }
     &::after {
       content: "";
@@ -115,7 +139,17 @@ export default {
       height: 0;
       border-style: solid;
       border-width: 4px 3.5px 0 3.5px;
-      border-color: #bdbdbd transparent transparent transparent;
+      border-color: $color_gray6 transparent transparent transparent;
+    }
+  }
+  &_is-descending & {
+    &__sort {
+      &::before {
+        border-color: transparent transparent $color_gray6 transparent;
+      }
+      &::after {
+        border-color: $color_gray5 transparent transparent transparent;
+      }
     }
   }
   &__inner {
